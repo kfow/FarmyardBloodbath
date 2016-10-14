@@ -3,7 +3,7 @@
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render })
 
 function preload () {
-  game.load.image('earth', 'assets/light_sand.png')
+  game.load.image('earth', 'assets/light_grass.png')
   game.load.spritesheet('dude', 'assets/ElPiggo.png', 216, 104)
   game.load.spritesheet('enemy', 'assets/dude.png', 64, 64)
 }
@@ -26,7 +26,7 @@ function create () {
   game.world.setBounds(-500, -500, 1000, 1000)
 
   // Our tiled scrolling background
-  land = game.add.tileSprite(0, 0, 800, 600, 'earth')
+  land = game.add.tileSprite(0, 0, 800, 1000, 'earth')
   land.fixedToCamera = true
 
   // The base of our player
