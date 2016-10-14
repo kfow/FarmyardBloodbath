@@ -4,7 +4,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 
 function preload () {
   game.load.image('earth', 'assets/light_sand.png')
-  game.load.spritesheet('dude', 'assets/dude.png', 64, 64)
+  game.load.spritesheet('dude', 'assets/ElPiggo.png', 216, 104)
   game.load.spritesheet('enemy', 'assets/dude.png', 64, 64)
 }
 
@@ -33,9 +33,9 @@ function create () {
   var startX = Math.round(Math.random() * (1000) - 500)
   var startY = Math.round(Math.random() * (1000) - 500)
   player = game.add.sprite(startX, startY, 'dude')
+  player.scale.x -= 0.5;
+  player.scale.y -= 0.5;
   player.anchor.setTo(0.5, 0.5)
-  player.animations.add('move', [0, 1, 2, 3, 4, 5, 6, 7], 20, true)
-  player.animations.add('stop', [3], 20, true)
 
   // This will force it to decelerate and limit its speed
   // player.body.drag.setTo(200, 200)
