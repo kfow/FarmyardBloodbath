@@ -1,6 +1,6 @@
 /* global Phaser RemotePlayer io */
 
-var game = new Phaser.Game(1270, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render })
+var game = new Phaser.Game(1270, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render })
 
 function preload () {
   game.load.image('earth', 'assets/light_grass.png')
@@ -20,21 +20,24 @@ var currentSpeed = 0
 var cursors
 
 function create () {
+  var width = 1270
+  var height = 700
+
   socket = io.connect()
 
   // Resize our game world to be a 2000 x 2000 square
-  game.world.setBounds(-500, -500, 1000, 1000)
+  game.world.setBounds(-500, -500, width, height)
 
   // Our tiled scrolling background
-  land = game.add.tileSprite(0, 0, 800, 1000, 'earth')
+  land = game.add.tileSprite(0, 0, width, height, 'earth')
   land.fixedToCamera = true
 
   // The base of our player
   var startX = Math.round(Math.random() * (1000) - 500)
   var startY = Math.round(Math.random() * (1000) - 500)
   player = game.add.sprite(startX, startY, 'dude')
-  player.scale.x -= 0.5;
-  player.scale.y -= 0.5;
+  player.scale.x -= 0.65;
+  player.scale.y -= 0.65;
   player.anchor.setTo(0.5, 0.5)
 
   // This will force it to decelerate and limit its speed
