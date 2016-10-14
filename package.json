@@ -1,17 +1,25 @@
 {
-  "name": "job_skills",
+  "name": "farmyardbloodbath",
   "version": "1.0.0",
-  "private": true,
-  "description": "Honours project: web application which takes job descriptions and returns the skills needed for this job.",
+  "description": "Farmyard Bloodbath, an agriculture themed shoot 'em up!",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Greg Thomson",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kfow/FarmyardBloodbath.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kfow/FarmyardBloodbath/issues"
+  },
+  "homepage": "https://github.com/kfow/FarmyardBloodbath#readme"
 }
