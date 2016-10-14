@@ -2,12 +2,13 @@ var util = require('util')
 var http = require('http')
 var path = require('path')
 //var ecstatic = require('ecstatic')
-var io = require('socket.io')
 var express = require('express');
 
-var Player = require('./lib/Player')
-
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+var Player = require('./lib/Player')
 
 app.disable('x-powered-by');
 
@@ -33,22 +34,22 @@ var players;	// Array of connected players
  * GAME INITIALISATION
 ------------------------------------------------------------------------------ */
 // Create and start the http server
-app.listen(app.get('port'), function(err) {
+server = app.listen(app.get('port'), function(err) {
   if (err) {
-    throw err
+    throw err;
   }
   console.log('Server started press Ctrl-C to terminate');
-  init()
+  init();
 
 })
 
 function init () {
   // Create an empty array to store players
-  players = []
+  players = [];
   // Attach Socket.IO to server
-  socket = io.listen(app.get('server'))
+  socket = io.listen(server);
   // Start listening for events
-  setEventHandlers()
+  setEventHandlers();
 }
 
 /* ---------------------------------------------------------------------------
