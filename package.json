@@ -4,11 +4,16 @@
   "description": "Farmyard Bloodbath, an agriculture themed shoot 'em up!",
   "main": "index.js",
   "dependencies": {
+    "ecstatic": "^1.0.1",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
-    "handlebars": "^4.0.5"
+    "handlebars": "^4.0.5",
+    "socket.io": "^1.4.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^0.7.10",
+    "standard": "^5.3.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
