@@ -15,16 +15,12 @@ function preload () {
 }
 
 var socket; // Socket connection
-
 var land;
-
 var player;
-
 var enemies;
-
+var hay;
 var currentSpeed = 0;
 var cursors;
-
 var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
 var nextFire = 0;
 var bullets;
@@ -35,20 +31,20 @@ function create () {
   var height = h
 
   socket = io.connect();
-this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-    //  Stop the following keys from propagating up to the browser
-    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+  //  Stop the following keys from propagating up to the browser
+  game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
   // Resize our game world to be a 2000 x 2000 square
-  game.world.setBounds(-500, -500, width, height);
+  game.world.setBounds(0, 0, width, height);
 
   // Our tiled scrolling background
   land = game.add.tileSprite(0, 0, width, height, 'earth');
   land.fixedToCamera = true;
 
   // The base of our player
-  var startX = Math.round(Math.random() * (1000) - 500);
-  var startY = Math.round(Math.random() * (1000) - 500);
+  var startX = Math.floor(Math.random() * w);
+  var startY = Math.floor(Math.random() * h);
   player = game.add.sprite(startX, startY, 'dude');
   player.scale.x -= 0.25;
   player.scale.y -= 0.25;
@@ -61,17 +57,24 @@ this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   player.body.collideWorldBounds = true;
 
   // add hay bales
-  hay = game.add.sprite(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
+  var numberOfHay = Math.round(Math.random() * 9) + 1;
+  hay = game.add.group();
+  hay.enableBody = true;
+  hay.physicsBodyType = Phaser.Physics.ARCADE;
+  hay.createMultiple(numberOfHay, 'bullet');
+  hay.setAll('checkWorldBounds', true);
+  hay.setAll('outOfBoundsKill', true);
+  for (i = 0; i < numberOfHay; i++){
+    hay.create(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
+  }
+  hay.forEach(function (x) {
+    x.body.immovable = true;
+  });
   hay.scale.x -= 0.25;
   hay.scale.y -= 0.25;
-  game.physics.enable(hay, Phaser.Physics.ARCADE);
-  hay.body.collideWorldBounds = true;
-  hay.body.immovable = true;
-
 
   // Create some baddies to waste :)
   enemies = [];
-
   player.bringToTop();
 
   game.camera.follow(player);
@@ -80,16 +83,15 @@ this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
   cursors = game.input.keyboard.createCursorKeys();
 
-  // Start listening for events
-
   bullets = game.add.group();
-    bullets.enableBody = true;
-    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+  bullets.enableBody = true;
+  bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-    bullets.createMultiple(50, 'bullet');
-    bullets.setAll('checkWorldBounds', true);
-    bullets.setAll('outOfBoundsKill', true);
+  bullets.createMultiple(50, 'bullet');
+  bullets.setAll('checkWorldBounds', true);
+  bullets.setAll('outOfBoundsKill', true);
 
+  // Start listening for events
   setEventHandlers();
 }
 
@@ -227,13 +229,10 @@ function update () {
 
   //shoots bullets
   if (this.spaceKey.isDown)
-  //if (game.input.spacebar.isDown)
   {
     //calculate fire values and emit to server to fire from enemy
     sendFire();
   }
-
-  //game.physics.arcade.overlap()
 
   socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
 }
@@ -262,28 +261,6 @@ function actualFire(data){
   }
 }
 
-/* // Old fire function here - to be deleted in a refactor
-function fire() {
-
-  if (game.time.now > nextFire)
-    {
-        bullet = bullets.getFirstExists(false);
-
-        if (bullet)
-        {
-            var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
-            point.rotate(player.x, player.y, player.rotation);
-            bullet.reset(point.x, point.y);
-            bullet.lifespan = 2000;
-            bullet.rotation = player.rotation;
-            game.physics.arcade.velocityFromRotation(player.rotation, 700, bullet.body.velocity);
-            nextFire  = game.time.now + fireRate; // changing fireRate changes how fast gun fires
-            // onEnemyBullet(point.x, point.y, player.rotation);
-            socket.emit('fire bullet', { x: point.x, y: point.y, angle: player.rotation })
-        }
-    }
-}
-*/
 function render () {
 
 }
