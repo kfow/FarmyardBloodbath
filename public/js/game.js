@@ -106,6 +106,9 @@ var setEventHandlers = function () {
 
   // Player removed message received
   socket.on('remove player', onRemovePlayer);
+
+  // Enemy shoots a bullet
+  socket.on('fire bullet', fire);
 }
 
 // Socket connected
@@ -254,6 +257,8 @@ function fire() {
             bullet.rotation = player.rotation;
             game.physics.arcade.velocityFromRotation(player.rotation, 700, bullet.body.velocity);
             nextFire  = game.time.now + fireRate; // changing fireRate changes how fast gun fires
+            // onEnemyBullet(point.x, point.y, player.rotation);
+            socket.emit('fire bullet', { x: point.x, y: point.y, angle: player.rotation })
         }
     }
 }

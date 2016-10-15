@@ -70,6 +70,8 @@ function onSocketConnection (client) {
   client.on('new player', onNewPlayer);
   // Listen for move player message
   client.on('move player', onMovePlayer);
+  // Listen for emitting a bullet
+  client.on('fire bullet', fireBullet);
 }
 
 // Socket client has disconnected
@@ -147,6 +149,13 @@ app.use(function(req, res){
   res.status('404');
   res.render('404');
 })
+
+// Spawns bullet in foreign games
+function fireBullet(x,y,enemyRotation) {
+   this.broadcast.emit('fire bullet', {x:x, y:y, enemyRotation})
+}
+
+
 
 /* ---------------------------------------------------------------------------
  * GAME HELPER FUNCTIONS
