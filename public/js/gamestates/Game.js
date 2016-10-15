@@ -7,11 +7,13 @@ var animalType;
 var land;
 var player;
 var enemies;
+var dual = false;
+var soundbite;
 var hay;
 var barn;
 var currentSpeed = 0;
 var cursors;
-var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
+var fireRate = 150;  //Fire rate for bullets - to be defined by guns later
 var nextFire = 0;
 var bullets;
 var self;
@@ -19,6 +21,7 @@ var fx = {};
 var dualCount = 0; //variable only used for dual weilding
 var health = 5;
 var bulletId = (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+var fireType = "single";
 
 Game.prototype  = {
 
@@ -140,6 +143,21 @@ Game.prototype  = {
     bullets.createMultiple(50, 'bullet');
     bullets.setAll('checkWorldBounds', true);
     bullets.setAll('outOfBoundsKill', true);
+
+    //work out character properties
+    soundbite = animalType;
+    if (soundbite.charAt(soundbite.length - 1) == '2'){
+      soundbite = soundbite.substr(0, soundbite.length-1);
+      dual = true;
+    }
+    //set fire type
+    if (Math.floor(Math.random() * 4) ==1){
+      fireType = 'triple';
+      //triple firetype - if also duel slow speed
+      if(dual == true){
+        fireRate += (20 + Math.floor(Math.random() * 80));
+      }
+    }
 
     // Start listening for events
     self.setEventHandlers();
@@ -267,7 +285,7 @@ Game.prototype  = {
 
       // TODO Pass in fireType, default right now
       // Available options so far: Triple
-      self.sendFire("triple");
+      self.sendFire(fireType);
     }
 
     // collision detection for bullets + players
@@ -343,14 +361,8 @@ Game.prototype  = {
   sendFire: function(fireType){
     if (game.time.now > nextFire)
       {
-
         //Calculate sound to play and if they are dual weilding
-        var dual = false;
-        var soundbite = animalType;
-        if (soundbite.charAt(soundbite.length - 1) == '2'){
-          soundbite = soundbite.substr(0, soundbite.length-1);
-          dual = true;
-        }
+
         //Calculate parameters for bullet
         if(dual == false || (dualCount==0)){
           var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
@@ -384,8 +396,8 @@ Game.prototype  = {
         bullet.rotation = data.rotation;
         bullet.bulletId = bulletId;
         if (i === 0)  {fireRotation = data.rotation;}
-        if (i === 1)  {fireRotation = data.rotation - 0.5;}
-        if (i === 2)  {fireRotation = data.rotation + 0.5;}
+        if (i === 1)  {fireRotation = data.rotation - 0.4;}
+        if (i === 2)  {fireRotation = data.rotation + 0.4;}
 
         game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bullet.body.velocity);
       }
