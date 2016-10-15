@@ -6,6 +6,7 @@ var land;
 var player;
 var enemies;
 var hay;
+var barn;
 var currentSpeed = 0;
 var cursors;
 var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
@@ -24,6 +25,8 @@ Game.prototype  = {
     game.load.image('dude', 'assets/ElPiggoSingle.png');
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
+    game.load.image('barn', 'assets/barn.png');
+
   },
 
   // Find player by ID
@@ -93,24 +96,6 @@ Game.prototype  = {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.maxVelocity.setTo(400, 400);
     player.body.collideWorldBounds = true;
-
-    // add hay bales
-    /*
-    var numberOfHay = Math.round(Math.random() * 9) + 1;
-    hay = game.add.group();
-    hay.enableBody = true;
-    hay.physicsBodyType = Phaser.Physics.ARCADE;
-    hay.createMultiple(numberOfHay, 'bullet');
-    hay.setAll('checkWorldBounds', true);
-    hay.setAll('outOfBoundsKill', true);
-    for (i = 0; i < numberOfHay; i++){
-      hay.create(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
-    }
-    hay.forEach(function (x) {
-      x.body.immovable = true;
-    });
-    hay.scale.x -= 0.25;
-    hay.scale.y -= 0.25; */
 
     // Create some baddies to waste :)
     enemies = [];
@@ -203,7 +188,10 @@ Game.prototype  = {
 
   update : function() {
     game.physics.arcade.collide(player, hay);
+    game.physics.arcade.collide(player, barn);
     game.physics.arcade.collide(hay, bullets);
+    game.physics.arcade.collide(barn, bullets);
+
 
     for (var i = 0; i < enemies.length; i++) {
       if (enemies[i].alive) {
@@ -264,6 +252,7 @@ Game.prototype  = {
     for (i = 0; i < numberOfHay; i++){
       terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
     }
+    terrain.push({x : Math.random() , y: Math.random() , object: 'barn'});
     console.log(terrain);
     socket.emit('terrain', terrain);
     self.drawTerrain(terrain);
@@ -276,7 +265,23 @@ Game.prototype  = {
       hay.setAll('checkWorldBounds', true);
       hay.setAll('outOfBoundsKill', true);
       for (i = 0; i < terrain.length; i++){
-          hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
+          console.log(terrain[i])
+          if (terrain[i].object == 'hay'){
+            hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
+          }
+          else {
+            barn = game.add.sprite(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * w), 'barn');
+            barn.scale.x += 0.75;
+            barn.scale.y += 0.75;
+            barn.anchor.setTo(0.5, 0.5);
+            game.physics.enable(barn, Phaser.Physics.ARCADE);
+            barn.body.maxVelocity.setTo(400, 400);
+            barn.body.collideWorldBounds = true;
+            barn.body.immovable = true;
+	          barn.body.collideWorldBounds = true;
+	          barn.body.checkCollision.right = false;
+	          barn.body.checkCollision.left = false;
+          }
       }
       hay.forEach(function (x) {
           x.body.immovable = true;
