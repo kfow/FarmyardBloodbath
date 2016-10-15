@@ -75,6 +75,7 @@ this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     bullets.createMultiple(50, 'bullet');
     bullets.setAll('checkWorldBounds', true);
     bullets.setAll('outOfBoundsKill', true);
+
   setEventHandlers();
 }
 
@@ -177,7 +178,7 @@ function update () {
 
   if (cursors.up.isDown) {
     // The speed we'll travel at
-    currentSpeed = 300;
+    currentSpeed = 150;
   } else {
     if (currentSpeed > 0) {
       currentSpeed -= 4;
@@ -197,17 +198,22 @@ function update () {
 
   if (game.input.activePointer.isDown) {
     if (game.physics.arcade.distanceToPointer(player) >= 10) {
-      currentSpeed = 300;
+      currentSpeed = 150;
 
       player.rotation = game.physics.arcade.angleToPointer(player);
     }
   }
 
+  //shoots bullets
   if (this.spaceKey.isDown)
   //if (game.input.spacebar.isDown)
   {
       fire();
   }
+
+
+
+  //game.physics.arcade.overlap()
 
   socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
 }
@@ -225,7 +231,9 @@ function fire() {
 
         if (bullet)
         {
-            bullet.reset(player.body.x + 16, player.body.y + 16);
+            var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
+            point.rotate(player.x, player.y, player.rotation);
+            bullet.reset(point.x, point.y);
             bullet.lifespan = 2000;
             bullet.rotation = player.rotation;
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
