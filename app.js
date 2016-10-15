@@ -152,11 +152,6 @@ app.use(function(req, res){
 
 // Spawns bullet in foreign games
 function fireBullet(x,y,enemyRotation) {
-  // game.physics.arcade.velocityFromRotation(enemyRotation, 700, 1000);
-   /*bullet.reset(point.x, point.y);
-   bullet.lifespan = 2000;
-   bullet.rotation = player.rotation;*/
-   console.log("TEST"); 
    this.broadcast.emit('fire bullet', {x:x, y:y, enemyRotation})
 }
 

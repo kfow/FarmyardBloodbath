@@ -7,7 +7,7 @@ var game = new Phaser.Game(w, h, Phaser.AUTO, '', { preload: preload, create: cr
 
 function preload () {
   var sprites = ["assets/ElSheepoSingle.png", "assets/ElSheepoDuel.png"];
-  game.load.image('enemy', sprites[Math.round(Math.random() * 2)]);
+  game.load.image('enemy', sprites[Math.floor(Math.random() * 2)]);
   game.load.image('earth', 'assets/light_grass.png');
   game.load.image('dude', 'assets/ElPiggoSingle.png');
   game.load.image('bullet', 'assets/bullet.png');
