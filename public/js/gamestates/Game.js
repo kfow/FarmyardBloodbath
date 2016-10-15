@@ -55,6 +55,12 @@ Game.prototype  = {
 
     // Enemy shoots a bullet
     socket.on('fire bullet', self.actualFire);
+
+    // get player to generate and echo layout to server
+    socket.on('generate master terrain', self.generateMasterTerrain);
+
+    // set terrain to master
+    socket.on('terrain', self.drawTerrain);
   },
 
   create: function() {
@@ -89,6 +95,7 @@ Game.prototype  = {
     player.body.collideWorldBounds = true;
 
     // add hay bales
+    /*
     var numberOfHay = Math.round(Math.random() * 9) + 1;
     hay = game.add.group();
     hay.enableBody = true;
@@ -103,7 +110,7 @@ Game.prototype  = {
       x.body.immovable = true;
     });
     hay.scale.x -= 0.25;
-    hay.scale.y -= 0.25;
+    hay.scale.y -= 0.25; */
 
     // Create some baddies to waste :)
     enemies = [];
@@ -248,6 +255,34 @@ Game.prototype  = {
     }
 
     socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
+  },
+
+  generateMasterTerrain: function (){
+    var terrain = [];
+    // generate array of dictonaries defining terrain:
+    var numberOfHay = Math.round(Math.random() * 9) + 1;
+    for (i = 0; i < numberOfHay; i++){
+      terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
+    }
+    console.log(terrain);
+    socket.emit('terrain', terrain);
+    self.drawTerrain(terrain);
+  },
+
+  drawTerrain: function (terrain){
+      hay = game.add.group();
+      hay.enableBody = true;
+      hay.physicsBodyType = Phaser.Physics.ARCADE;
+      hay.setAll('checkWorldBounds', true);
+      hay.setAll('outOfBoundsKill', true);
+      for (i = 0; i < terrain.length; i++){
+          hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
+      }
+      hay.forEach(function (x) {
+          x.body.immovable = true;
+      });
+      hay.scale.x -= 0.25;
+      hay.scale.y -= 0.25;
   },
 
   sendFire: function(){

@@ -29,6 +29,7 @@ app.use(express.static(__dirname + '/public'));
 ------------------------------------------------------------------------------ */
 var socket;	// Socket controller
 var players;	// Array of connected players
+var terrain; // Details of terrain -- currently just haybails
 
 /* ---------------------------------------------------------------------------
  * GAME INITIALISATION
@@ -72,6 +73,8 @@ function onSocketConnection (client) {
   client.on('move player', onMovePlayer);
   // Listen for emitting a bullet
   client.on('fire bullet', fireBullet);
+  // Listen for master terrain details
+  client.on('terrain', saveTerrain);
 }
 
 // Socket client has disconnected
@@ -104,6 +107,13 @@ function onNewPlayer (data) {
   }
   // Add new player to the players array
   players.push(newPlayer)
+
+  if(players.length<= 1){
+    //this is the first player, use their co-ords for terrain objects
+    this.emit('generate master terrain',{});
+  } else{
+    this.emit('terrain', terrain);
+  }
 }
 
 // Player has moved
@@ -155,6 +165,9 @@ function fireBullet(data) {
    this.broadcast.emit('fire bullet', data)
 }
 
+function saveTerrain(data){
+  terrain = data;
+}
 
 
 /* ---------------------------------------------------------------------------
