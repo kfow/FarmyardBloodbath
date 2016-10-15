@@ -12,6 +12,7 @@ var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
 var nextFire = 0;
 var bullets;
 var self;
+var fx = {};
 
 Game.prototype  = {
 
@@ -24,6 +25,9 @@ Game.prototype  = {
     game.load.image('dude', 'assets/ElPiggoSingle.png');
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
+    game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
+    game.load.audio('goat_happy', 'sounds/goat_happy.mp3');
+    game.load.audio('troll', 'sounds/troll.mp3');
   },
 
   // Find player by ID
@@ -68,9 +72,10 @@ Game.prototype  = {
     var width = w
     var height = h
 
+    self.loadAudio();
+
     socket = io.connect();
     self.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
     //  Stop the following keys from propagating up to the browser
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
     // Resize our game world to be a 2000 x 2000 square
@@ -196,7 +201,7 @@ Game.prototype  = {
     }
 
     removePlayer.player.kill();
-
+    fx['troll'] = game.add.audio('troll');
     // Remove player from array
     enemies.splice(enemies.indexOf(removePlayer), 1);
   },
@@ -252,6 +257,7 @@ Game.prototype  = {
     {
       //calculate fire values and emit to server to fire from enemy
       self.sendFire();
+      console.log(player);
     }
 
     socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
@@ -296,6 +302,7 @@ Game.prototype  = {
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
         self.actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+        fx['pig_happy'].play();
       }
   },
 
@@ -307,6 +314,11 @@ Game.prototype  = {
       bullet.rotation = data.rotation;
       game.physics.arcade.velocityFromRotation(data.rotation, data.velocity, bullet.body.velocity);
     }
-  }
+  },
 
+  loadAudio: function(){
+      fx['pig_happy'] = game.add.audio('pig_happy');
+      fx['troll'] = game.add.audio('troll');
+      fx['goat_happy'] = game.add.audio('goat_happy');
+  }
 }

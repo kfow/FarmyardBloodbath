@@ -164,11 +164,9 @@ app.use(function(req, res){
 function fireBullet(data) {
    this.broadcast.emit('fire bullet', data)
 }
-
 function saveTerrain(data){
   terrain = data;
 }
-
 
 /* ---------------------------------------------------------------------------
  * GAME HELPER FUNCTIONS
