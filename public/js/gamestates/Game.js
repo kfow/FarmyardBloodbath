@@ -1,8 +1,9 @@
 // Main Game goes here
 var Game = function(game){};
 
-var animals = ['pig','sheep', 'cow', 'pig2','sheep2', 'cow2'];
+var animals = ['pig','sheep', 'cow', 'pig2', 'sheep2', 'cow2'];
 var socket; // Socket connection
+var animalType;
 var land;
 var player;
 var enemies;
@@ -33,7 +34,8 @@ Game.prototype  = {
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
     game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
-    game.load.audio('goat_happy', 'sounds/goat_happy.mp3');
+    game.load.audio('sheep_happy', 'sounds/sheep_happy.mp3');
+    game.load.audio('cow_happy', 'sounds/cow_happy.mp3');
     game.load.audio('troll', 'sounds/troll.mp3');
     game.load.image('barn', 'assets/barn.png');
 
@@ -336,7 +338,12 @@ Game.prototype  = {
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
         self.actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
-        fx['pig_happy'].play();
+        var soundbite = animalType;
+        if (soundbite.charAt(soundbite.length - 1) == '2'){
+          soundbite = soundbite.substr(0, soundbite.length-1);
+          console.log(soundbite);
+        }
+        fx[soundbite].play();
       }
   },
 
@@ -351,8 +358,9 @@ Game.prototype  = {
   },
 
   loadAudio: function(){
-      fx['pig_happy'] = game.add.audio('pig_happy');
+      fx['pig'] = game.add.audio('pig_happy');
       fx['troll'] = game.add.audio('troll');
-      fx['goat_happy'] = game.add.audio('goat_happy');
+      fx['sheep'] = game.add.audio('sheep_happy');
+      fx['cow'] = game.add.audio('cow_happy');
   }
 }
