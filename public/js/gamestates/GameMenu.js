@@ -8,7 +8,7 @@ GameMenu.prototype  = {
 
     console.log("GameMenu Create")
 
-    var logo = game.add.sprite(game.world.centreX, 280, 'brand');
+    var logo = game.add.sprite(game.world.centreX, game.world.centreY, 'brand');
     logo.inputEnabled = true;
     logo.events.onInputUp.add(function(){
       console.log("Clicked!")

@@ -2,7 +2,7 @@
 var Options = function(game){};
 
 
-Game.prototype  = {
+Options.prototype  = {
   create: function() {
 
   }
