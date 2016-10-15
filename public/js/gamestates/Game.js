@@ -23,6 +23,8 @@ var dualCount = 0; //variable only used for dual weilding
 var health = 5;
 var bulletId = (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 var fireType = "single";
+var heart = null;
+var lastDrawnHealth = null;
 
 Game.prototype  = {
 
@@ -45,7 +47,11 @@ Game.prototype  = {
     game.load.audio('cow_happy', 'sounds/cow_happy.mp3');
     game.load.audio('troll', 'sounds/troll.mp3');
     game.load.image('barn', 'assets/barn.png');
-
+    game.load.image('heart5', 'assets/Heart5.png');
+    game.load.image('heart4', 'assets/Heart4.png');
+    game.load.image('heart3', 'assets/Heart3.png');
+    game.load.image('heart2', 'assets/Heart2.png');
+    game.load.image('heart1', 'assets/Heart1.png');
   },
 
   // Find player by ID
@@ -168,6 +174,23 @@ Game.prototype  = {
     // Start listening for events
     self.setEventHandlers();
   },
+
+  drawHealthBar : function(health){
+    // the bar itself
+    // if health has changed, draw new sprite
+
+    if (health != lastDrawnHealth){
+       if (heart != null){
+         heart.destroy();
+       };
+
+       heart = game.add.sprite(0, 0, 'heart' + (health).toString());
+       heart.scale.x -= 0.5;
+       heart.scale.y -= 0.5;
+       heart.bringToTop();
+       lastDrawnHealth = health;
+     }
+   },
 
   // Socket connected
   onSocketConnected : function() {
@@ -308,7 +331,9 @@ Game.prototype  = {
 
     // collision detection for bullets + players
 
-    socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
+    socket.emit('move player', { x: player.x, y: player.y, angle: player.angle });
+
+    self.drawHealthBar(health);
   },
 
   // I think the parameters are swapped for some ridiculous reason
