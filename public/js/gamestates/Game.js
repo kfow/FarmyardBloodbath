@@ -6,6 +6,7 @@ var land;
 var player;
 var enemies;
 var hay;
+var barn;
 var currentSpeed = 0;
 var cursors;
 var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
@@ -28,6 +29,8 @@ Game.prototype  = {
     game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
     game.load.audio('goat_happy', 'sounds/goat_happy.mp3');
     game.load.audio('troll', 'sounds/troll.mp3');
+    game.load.image('barn', 'assets/barn.png');
+
   },
 
   // Find player by ID
@@ -60,12 +63,16 @@ Game.prototype  = {
     // Enemy shoots a bullet
     socket.on('fire bullet', self.actualFire);
 
+    // enemy got hit
+    socket.on('player hit', self.gotHit);
+
     // get player to generate and echo layout to server
     socket.on('generate master terrain', self.generateMasterTerrain);
 
     // set terrain to master
     socket.on('terrain', self.drawTerrain);
   },
+
 
   create: function() {
 
@@ -98,24 +105,6 @@ Game.prototype  = {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.maxVelocity.setTo(400, 400);
     player.body.collideWorldBounds = true;
-
-    // add hay bales
-    /*
-    var numberOfHay = Math.round(Math.random() * 9) + 1;
-    hay = game.add.group();
-    hay.enableBody = true;
-    hay.physicsBodyType = Phaser.Physics.ARCADE;
-    hay.createMultiple(numberOfHay, 'bullet');
-    hay.setAll('checkWorldBounds', true);
-    hay.setAll('outOfBoundsKill', true);
-    for (i = 0; i < numberOfHay; i++){
-      hay.create(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
-    }
-    hay.forEach(function (x) {
-      x.body.immovable = true;
-    });
-    hay.scale.x -= 0.25;
-    hay.scale.y -= 0.25; */
 
     // Create some baddies to waste :)
     enemies = [];
@@ -160,6 +149,7 @@ Game.prototype  = {
 
   // New player
   onNewPlayer : function(data) {
+    console.log(data)
     console.log('New player connected:', data.id);
 
     // Avoid possible duplicate players
@@ -208,7 +198,10 @@ Game.prototype  = {
 
   update : function() {
     game.physics.arcade.collide(player, hay);
+    game.physics.arcade.collide(player, barn);
     game.physics.arcade.collide(hay, bullets);
+    game.physics.arcade.collide(barn, bullets);
+
 
     for (var i = 0; i < enemies.length; i++) {
       if (enemies[i].alive) {
@@ -260,9 +253,26 @@ Game.prototype  = {
       console.log(player);
     }
 
+    // collision detection for bullets + players
+    game.physics.arcade.overlap(bullets, player, self.collisionHandler, null, self);
+
     socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
   },
 
+  // I think the parameters are swapped for some ridiculous reason
+  collisionHandler: function(tempPlayer, bullet) {
+    tempPlayer.kill;
+    bullet.kill;
+    socket.emit('player hit', 1);
+  },
+
+  gotHit: function(data) {
+    hitPlayer = self.playerById(data.id.id);  //gets player who got hit
+    hitPlayer.health = hitPlayer.health - data.damage;
+    /*if (hitPlayer.health < 1) {
+      hitPlayer.kill;
+    }*/
+  },
   generateMasterTerrain: function (){
     var terrain = [];
     // generate array of dictonaries defining terrain:
@@ -270,6 +280,7 @@ Game.prototype  = {
     for (i = 0; i < numberOfHay; i++){
       terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
     }
+    terrain.push({x : Math.random() , y: Math.random() , object: 'barn'});
     console.log(terrain);
     socket.emit('terrain', terrain);
     self.drawTerrain(terrain);
@@ -282,7 +293,23 @@ Game.prototype  = {
       hay.setAll('checkWorldBounds', true);
       hay.setAll('outOfBoundsKill', true);
       for (i = 0; i < terrain.length; i++){
-          hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
+          console.log(terrain[i])
+          if (terrain[i].object == 'hay'){
+            hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
+          }
+          else {
+            barn = game.add.sprite(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * w), 'barn');
+            barn.scale.x += 0.75;
+            barn.scale.y += 0.75;
+            barn.anchor.setTo(0.5, 0.5);
+            game.physics.enable(barn, Phaser.Physics.ARCADE);
+            barn.body.maxVelocity.setTo(400, 400);
+            barn.body.collideWorldBounds = true;
+            barn.body.immovable = true;
+	          barn.body.collideWorldBounds = true;
+	          barn.body.checkCollision.right = false;
+	          barn.body.checkCollision.left = false;
+          }
       }
       hay.forEach(function (x) {
           x.body.immovable = true;
