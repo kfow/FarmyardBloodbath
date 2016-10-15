@@ -213,7 +213,7 @@ function update () {
 }
 
 var fireRate = 100;
-var nextFire = 0;
+var nextFire = 0;  
 
 var bullets;
 
@@ -229,7 +229,7 @@ function fire() {
             bullet.lifespan = 2000;
             bullet.rotation = player.rotation;
             game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
-            nextFire  = game.time.now + 200;
+            nextFire  = game.time.now + fireRate; // changing fireRate changes how fast gun fires
         }
     }
 }
