@@ -1,6 +1,9 @@
 /* global Phaser RemotePlayer io */
 
-var game = new Phaser.Game(1270, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
+var game = new Phaser.Game(w, h, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render })
 
 function preload () {
   game.load.image('earth', 'assets/light_grass.png');
@@ -20,8 +23,9 @@ var currentSpeed = 0;
 var cursors;
 
 function create () {
-  var width = 1270;
-  var height = 700;
+
+  var width = w
+  var height = h
 
   socket = io.connect();
 
