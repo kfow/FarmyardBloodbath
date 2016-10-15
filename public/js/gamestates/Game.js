@@ -160,7 +160,6 @@ Game.prototype  = {
 
   // Move player
   onMovePlayer: function(data) {
-    console.log("Move player");
     var movePlayer = self.playerById(data.id);
 
     // Player not found
@@ -275,7 +274,6 @@ Game.prototype  = {
       terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
     }
     terrain.push({x : Math.random() , y: Math.random() , object: 'barn'});
-    console.log(terrain);
     socket.emit('terrain', terrain);
     self.drawTerrain(terrain);
   },
@@ -287,7 +285,6 @@ Game.prototype  = {
       hay.setAll('checkWorldBounds', true);
       hay.setAll('outOfBoundsKill', true);
       for (i = 0; i < terrain.length; i++){
-          console.log(terrain[i])
           if (terrain[i].object == 'hay'){
             hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
           }
@@ -315,7 +312,6 @@ Game.prototype  = {
   sendFire: function(){
     if (game.time.now > nextFire)
       {
-        console.log("Sending fire bullet message");
         //Calculate parameters for bullet
         var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
         point.rotate(player.x, player.y, player.rotation);
