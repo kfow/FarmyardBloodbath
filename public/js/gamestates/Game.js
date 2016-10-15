@@ -55,7 +55,11 @@ Game.prototype  = {
 
     // Enemy shoots a bullet
     socket.on('fire bullet', self.actualFire);
+
+    // enemy got hit
+    socket.on('player hit', self.gotHit);
   },
+
 
   create: function() {
 
@@ -148,6 +152,7 @@ Game.prototype  = {
 
   // New player
   onNewPlayer : function(data) {
+    console.log(data)
     console.log('New player connected:', data.id);
 
     // Avoid possible duplicate players
@@ -247,7 +252,25 @@ Game.prototype  = {
       self.sendFire();
     }
 
+    // collision detection for bullets + players
+    game.physics.arcade.overlap(bullets, player, self.collisionHandler, null, self);
+
     socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
+  },
+
+  // I think the parameters are swapped for some ridiculous reason
+  collisionHandler: function(tempPlayer, bullet) {
+    tempPlayer.kill;
+    bullet.kill;
+    socket.emit('player hit', 1);
+  },
+
+  gotHit: function(data) {
+    hitPlayer = self.playerById(data.id.id);  //gets player who got hit
+    hitPlayer.health = hitPlayer.health - data.damage;
+    /*if (hitPlayer.health < 1) {
+      hitPlayer.kill;
+    }*/
   },
 
   sendFire: function(){
