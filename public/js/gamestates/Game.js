@@ -11,6 +11,7 @@ var dual = false;
 var soundbite;
 var hay;
 var barn;
+var travelSpeed = 200;
 var currentSpeed = 0;
 var cursors;
 var fireRate = 150;  //Fire rate for bullets - to be defined by guns later
@@ -155,8 +156,13 @@ Game.prototype  = {
       fireType = 'triple';
       //triple firetype - if also duel slow speed
       if(dual == true){
-        fireRate += (20 + Math.floor(Math.random() * 80));
+        fireRate += (20 + Math.floor(Math.random() * 40));
+        travelSpeed -= (Math.floor(Math.random() * 40));
       }
+    }
+    fireRate += (Math.floor(Math.random() * 90)) - 40;
+    if(fireRate > 210 && !(dual == true && fireType == 'triple')){
+        travelSpeed += (Math.floor(Math.random() * 100));
     }
 
     // Start listening for events
@@ -252,7 +258,7 @@ Game.prototype  = {
 
     if (cursors.up.isDown) {
       // The speed we'll travel at
-      currentSpeed = 200;
+      currentSpeed = travelSpeed;
     } else {
       if (currentSpeed > 0) {
         currentSpeed -= 4;
