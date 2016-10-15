@@ -17,6 +17,8 @@ var bullets;
 var self;
 var fx = {};
 var dualCount = 0; //variable only used for dual weilding
+var health = 5;
+var bulletId = (((1+Math.random())*0x10000)|0).toString(16).substring(1);
 
 Game.prototype  = {
 
@@ -277,12 +279,14 @@ Game.prototype  = {
   // I think the parameters are swapped for some ridiculous reason
   collisionHandler: function(tempPlayer, bullet) {
     // player.health is nothing need to fix this
-    // player.health = player.health - bullet.damage;
-    socket.emit('player hit', 1);
-    /*if (player.health < 1) {
-      console.log("got here should be restarting");
-      game.state.start("Game");
-    }*/
+    if (bullet.bulletId != bulletId){
+      health = health - 1;
+      socket.emit('player hit', 1);
+      if (health < 1) {
+        location.reload();
+        //game.state.start("GameMenu");
+      }
+    }
   },
 
   gotHit: function(data) {
@@ -378,7 +382,7 @@ Game.prototype  = {
         bullet.reset(data.x, data.y);
         bullet.lifespan = data.lifespan;
         bullet.rotation = data.rotation;
-
+        bullet.bulletId = bulletId;
         if (i === 0)  {fireRotation = data.rotation;}
         if (i === 1)  {fireRotation = data.rotation - 0.5;}
         if (i === 2)  {fireRotation = data.rotation + 0.5;}
