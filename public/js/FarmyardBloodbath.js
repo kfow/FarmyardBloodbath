@@ -16,7 +16,7 @@ var musicPlayer;
 
 FarmyardBloodbath.prototype = {
     preload: function() {
-        game.load.image('brand', 'assets/brand.png');
+        game.load.image('brand', 'assets/FarmyardBloodbathWriting.png');
         game.load.script('Splash', 'js/gamestates/Splash.js');
     },
 
