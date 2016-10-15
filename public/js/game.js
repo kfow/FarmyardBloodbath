@@ -9,6 +9,7 @@ function preload () {
   game.load.image('earth', 'assets/light_grass.png');
   game.load.image('dude', 'assets/ElPiggoSingle.png');
   game.load.image('enemy', 'assets/ElPiggoDuel.png');
+  game.load.image('bullet', 'assets/bullet.png');
 }
 
 var socket; // Socket connection
@@ -22,13 +23,17 @@ var enemies;
 var currentSpeed = 0;
 var cursors;
 
+
 function create () {
 
   var width = w
   var height = h
 
   socket = io.connect();
+this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+    //  Stop the following keys from propagating up to the browser
+    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
   // Resize our game world to be a 2000 x 2000 square
   game.world.setBounds(-500, -500, width, height);
 
@@ -62,6 +67,14 @@ function create () {
   cursors = game.input.keyboard.createCursorKeys();
 
   // Start listening for events
+
+  bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    bullets.createMultiple(50, 'bullet');
+    bullets.setAll('checkWorldBounds', true);
+    bullets.setAll('outOfBoundsKill', true);
   setEventHandlers();
 }
 
@@ -190,7 +203,35 @@ function update () {
     }
   }
 
-  socket.emit('move player', { x: player.x, y: player.y, angle: player.angle });
+  if (this.spaceKey.isDown)
+  //if (game.input.spacebar.isDown)
+  {
+      fire();
+  }
+
+  socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
+}
+
+var fireRate = 100;
+var nextFire = 0;
+
+var bullets;
+
+function fire() {
+
+  if (game.time.now > nextFire)
+    {
+        bullet = bullets.getFirstExists(false);
+
+        if (bullet)
+        {
+            bullet.reset(player.body.x + 16, player.body.y + 16);
+            bullet.lifespan = 2000;
+            bullet.rotation = player.rotation;
+            game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
+            nextFire  = game.time.now + 200;
+        }
+    }
 }
 
 function render () {
