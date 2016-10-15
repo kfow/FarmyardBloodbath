@@ -59,12 +59,18 @@ Game.prototype  = {
     // Enemy shoots a bullet
     socket.on('fire bullet', self.actualFire);
 
+<<<<<<< HEAD
+    // enemy got hit
+    socket.on('player hit', self.gotHit);
+=======
     // get player to generate and echo layout to server
     socket.on('generate master terrain', self.generateMasterTerrain);
 
     // set terrain to master
     socket.on('terrain', self.drawTerrain);
+>>>>>>> 942af22bab7760205f8c0b159fe2b5a03bcf884a
   },
+
 
   create: function() {
 
@@ -140,6 +146,7 @@ Game.prototype  = {
 
   // New player
   onNewPlayer : function(data) {
+    console.log(data)
     console.log('New player connected:', data.id);
 
     // Avoid possible duplicate players
@@ -242,9 +249,27 @@ Game.prototype  = {
       self.sendFire();
     }
 
+    // collision detection for bullets + players
+    game.physics.arcade.overlap(bullets, player, self.collisionHandler, null, self);
+
     socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
   },
 
+<<<<<<< HEAD
+  // I think the parameters are swapped for some ridiculous reason
+  collisionHandler: function(tempPlayer, bullet) {
+    tempPlayer.kill;
+    bullet.kill;
+    socket.emit('player hit', 1);
+  },
+
+  gotHit: function(data) {
+    hitPlayer = self.playerById(data.id.id);  //gets player who got hit
+    hitPlayer.health = hitPlayer.health - data.damage;
+    /*if (hitPlayer.health < 1) {
+      hitPlayer.kill;
+    }*/
+=======
   generateMasterTerrain: function (){
     var terrain = [];
     // generate array of dictonaries defining terrain:
@@ -288,6 +313,7 @@ Game.prototype  = {
       });
       hay.scale.x -= 0.25;
       hay.scale.y -= 0.25;
+>>>>>>> 942af22bab7760205f8c0b159fe2b5a03bcf884a
   },
 
   sendFire: function(){

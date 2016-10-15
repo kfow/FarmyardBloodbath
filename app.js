@@ -73,10 +73,17 @@ function onSocketConnection (client) {
   client.on('move player', onMovePlayer);
   // Listen for emitting a bullet
   client.on('fire bullet', fireBullet);
+  // Listen for player being hit
+  client.on('player hit', playerHit);
   // Listen for master terrain details
   client.on('terrain', saveTerrain);
 }
 
+
+
+function playerHit (data) {
+  this.broadcast.emit('player hit', {id:playerById(this.id), damage: data})
+}
 // Socket client has disconnected
 function onClientDisconnect () {
   util.log('Player has disconnected: ' + this.id)
