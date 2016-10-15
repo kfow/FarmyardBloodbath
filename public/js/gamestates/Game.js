@@ -118,6 +118,7 @@ Game.prototype  = {
     // Create some baddies to waste :)
     enemies = [];
     player.bringToTop();
+    barn.bringToTop();
 
     game.camera.follow(player);
     game.camera.deadzone = new Phaser.Rectangle(150, 150, 500, 300);
