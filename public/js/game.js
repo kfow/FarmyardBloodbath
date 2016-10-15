@@ -22,6 +22,8 @@ var enemies
 var currentSpeed = 0
 var cursors
 
+var bullets;
+
 function create () {
   var width = w
   var height = h
@@ -61,7 +63,15 @@ function create () {
   cursors = game.input.keyboard.createCursorKeys()
 
   // Start listening for events
-  setEventHandlers()
+  setEventHandlers()   
+
+  bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    bullets.createMultiple(50, 'bullet');
+    bullets.setAll('checkWorldBounds', true);
+    bullets.setAll('outOfBoundsKill', true);
 }
 
 var setEventHandlers = function () {
@@ -189,7 +199,31 @@ function update () {
     }
   }
 
+    if (game.input.activePointer.isDown)
+    {
+        fire();
+    }
+
   socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
+}
+
+var fireRate = 100;
+var nextFire = 0;
+
+function fire() {
+
+    if (game.time.now > nextFire && bullets.countDead() > 0)
+    {
+        nextFire = game.time.now + fireRate;
+
+        var bullet = bullets.getFirstDead();
+
+        bullet.reset(dude.x - 8, dude.y - 8);
+
+        game.physics.arcade.moveToPointer(bullet, 300);
+        console.log("TEST");
+    }
+
 }
 
 function render () {
