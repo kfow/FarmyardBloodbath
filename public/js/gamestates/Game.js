@@ -16,6 +16,7 @@ var nextFire = 0;
 var bullets;
 var self;
 var fx = {};
+var dualCount = 0; //variable only used for dual weilding
 
 Game.prototype  = {
 
@@ -338,18 +339,29 @@ Game.prototype  = {
   sendFire: function(fireType){
     if (game.time.now > nextFire)
       {
+
+        //Calculate sound to play and if they are dual weilding
+        var dual = false;
+        var soundbite = animalType;
+        if (soundbite.charAt(soundbite.length - 1) == '2'){
+          soundbite = soundbite.substr(0, soundbite.length-1);
+          dual = true;
+        }
         //Calculate parameters for bullet
-        var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
+        if(dual == false || (dualCount==0)){
+          var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
+          dualCount++;
+        }else{
+          var point = new Phaser.Point(player.body.x + 90, player.body.y +38);
+          dualCount=0;
+        }
+
         point.rotate(player.x, player.y, player.rotation);
+
         socket.emit('fire bullet', { x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
         self.actualFire({fireType: fireType, x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
-        var soundbite = animalType;
-        if (soundbite.charAt(soundbite.length - 1) == '2'){
-          soundbite = soundbite.substr(0, soundbite.length-1);
-          console.log(soundbite);
-        }
         fx[soundbite].play();
       }
   },
