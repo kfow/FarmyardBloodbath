@@ -73,13 +73,10 @@ function onSocketConnection (client) {
   client.on('move player', onMovePlayer);
   // Listen for emitting a bullet
   client.on('fire bullet', fireBullet);
-<<<<<<< HEAD
-  //
+  // Listen for player being hit
   client.on('player hit', playerHit);
-=======
   // Listen for master terrain details
   client.on('terrain', saveTerrain);
->>>>>>> 942af22bab7760205f8c0b159fe2b5a03bcf884a
 }
 
 
