@@ -23,7 +23,6 @@ var enemies;
 var currentSpeed = 0;
 var cursors;
 
-var bullets;
 
 function create () {
 
@@ -216,20 +215,23 @@ function update () {
 var fireRate = 100;
 var nextFire = 0;
 
+var bullets;
+
 function fire() {
 
-    if (game.time.now > nextFire && bullets.countDead() > 0)
+  if (game.time.now > nextFire)
     {
-        nextFire = game.time.now + fireRate;
+        bullet = bullets.getFirstExists(false);
 
-        var bullet = bullets.getFirstDead();
-
-        bullet.reset(player.x - 8, player.y - 8);
-
-        game.physics.arcade.moveToPointer(bullet, 300);
-        console.log("TEST");
+        if (bullet)
+        {
+            bullet.reset(player.body.x + 16, player.body.y + 16);
+            bullet.lifespan = 2000;
+            bullet.rotation = player.rotation;
+            game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
+            nextFire  = game.time.now + 200;
+        }
     }
-
 }
 
 function render () {
