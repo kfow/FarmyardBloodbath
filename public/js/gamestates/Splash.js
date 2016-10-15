@@ -21,8 +21,7 @@ Splash.prototype = {
   },
 
   preload: function () {
-    game.add.existing(this.logo).scale.setTo(4);
-
+    game.add.existing(this.logo).scale.setTo(2);
     this.loadScripts();
   },
 
