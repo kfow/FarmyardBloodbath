@@ -151,8 +151,8 @@ app.use(function(req, res){
 })
 
 // Spawns bullet in foreign games
-function fireBullet(x,y,enemyRotation) {
-   this.broadcast.emit('fire bullet', {x:x, y:y, enemyRotation})
+function fireBullet(data) {
+   this.broadcast.emit('fire bullet', data)
 }
 
 

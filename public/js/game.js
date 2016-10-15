@@ -25,6 +25,9 @@ var enemies;
 var currentSpeed = 0;
 var cursors;
 
+var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
+var nextFire = 0;
+var bullets;
 
 function create () {
 
@@ -107,7 +110,7 @@ var setEventHandlers = function () {
   socket.on('remove player', onRemovePlayer);
 
   // Enemy shoots a bullet
-  socket.on('fire bullet', fire);
+  socket.on('fire bullet', actualFire);
 }
 
 // Socket connected
@@ -226,21 +229,40 @@ function update () {
   if (this.spaceKey.isDown)
   //if (game.input.spacebar.isDown)
   {
-      fire();
+    //calculate fire values and emit to server to fire from enemy
+    sendFire();
   }
-
-
 
   //game.physics.arcade.overlap()
 
   socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
 }
 
-var fireRate = 100;
-var nextFire = 0;
+function sendFire(){
+  if (game.time.now > nextFire)
+    {
+      console.log("Sending fire bullet message");
+      //Calculate parameters for bullet
+      var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
+      point.rotate(player.x, player.y, player.rotation);
+      socket.emit('fire bullet', { x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+      nextFire  = game.time.now + fireRate;
+      //Call actualfire with data
+      actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+    }
+}
 
-var bullets;
+function actualFire(data){
+  bullet = bullets.getFirstExists(false);
+  if (bullet){
+    bullet.reset(data.x, data.y);
+    bullet.lifespan = data.lifespan;
+    bullet.rotation = data.rotation;
+    game.physics.arcade.velocityFromRotation(data.rotation, data.velocity, bullet.body.velocity);
+  }
+}
 
+/* // Old fire function here - to be deleted in a refactor
 function fire() {
 
   if (game.time.now > nextFire)
@@ -261,7 +283,7 @@ function fire() {
         }
     }
 }
-
+*/
 function render () {
 
 }
