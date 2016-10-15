@@ -6,9 +6,10 @@ var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 var game = new Phaser.Game(w, h, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render })
 
 function preload () {
+  var sprites = ["assets/ElSheepoSingle.png"];
+  game.load.image('enemy', sprites[Math.floor(Math.random() * 3)]);
   game.load.image('earth', 'assets/light_grass.png');
   game.load.image('dude', 'assets/ElPiggoSingle.png');
-  game.load.image('enemy', 'assets/ElPiggoDuel.png');
   game.load.image('bullet', 'assets/bullet.png');
 }
 
@@ -213,7 +214,7 @@ function update () {
 }
 
 var fireRate = 100;
-var nextFire = 0;  
+var nextFire = 0;
 
 var bullets;
 
