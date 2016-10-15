@@ -179,7 +179,7 @@ function update () {
 
   if (cursors.up.isDown) {
     // The speed we'll travel at
-    currentSpeed = 150;
+    currentSpeed = 200;
   } else {
     if (currentSpeed > 0) {
       currentSpeed -= 4;
@@ -199,7 +199,7 @@ function update () {
 
   if (game.input.activePointer.isDown) {
     if (game.physics.arcade.distanceToPointer(player) >= 10) {
-      currentSpeed = 150;
+      currentSpeed = 200;
 
       player.rotation = game.physics.arcade.angleToPointer(player);
     }
@@ -237,7 +237,7 @@ function fire() {
             bullet.reset(point.x, point.y);
             bullet.lifespan = 2000;
             bullet.rotation = player.rotation;
-            game.physics.arcade.velocityFromRotation(player.rotation, 400, bullet.body.velocity);
+            game.physics.arcade.velocityFromRotation(player.rotation, 700, bullet.body.velocity);
             nextFire  = game.time.now + fireRate; // changing fireRate changes how fast gun fires
         }
     }
