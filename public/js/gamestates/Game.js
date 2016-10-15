@@ -1,7 +1,7 @@
 // Main Game goes here
 var Game = function(game){};
 
-var animals = ['pig','sheep','pig2','sheep2'];
+var animals = ['pig','sheep', 'cow', 'pig2','sheep2', 'cow2'];
 var socket; // Socket connection
 var land;
 var player;
@@ -26,6 +26,8 @@ Game.prototype  = {
     game.load.image('earth', 'assets/light_grass.png');
     game.load.image('pig2', 'assets/ElPiggoDuel.png');
     game.load.image('sheep2', 'assets/ElSheepoDuel.png');
+    game.load.image('cow2', 'assets/ElCowoDuel.png');
+    game.load.image('cow', 'assets/ElCowoSingle.png');
     game.load.image('pig', 'assets/ElPiggoSingle.png');
     game.load.image('sheep', 'assets/ElSheepoSingle.png');
     game.load.image('bullet', 'assets/bullet.png');
@@ -118,7 +120,7 @@ Game.prototype  = {
     // Create some baddies to waste :)
     enemies = [];
     player.bringToTop();
-    barn.bringToTop();
+
 
     game.camera.follow(player);
     game.camera.deadzone = new Phaser.Rectangle(150, 150, 500, 300);
@@ -314,6 +316,7 @@ Game.prototype  = {
 	          barn.body.collideWorldBounds = true;
 	          barn.body.checkCollision.right = false;
 	          barn.body.checkCollision.left = false;
+            barn.bringToTop();
           }
       }
       hay.forEach(function (x) {
