@@ -15,8 +15,6 @@ var self;
 
 Game.prototype  = {
 
-  //var self = this;
-
   preload: function(){
     // Define Self
     self = this;
@@ -65,7 +63,7 @@ Game.prototype  = {
     var height = h
 
     socket = io.connect();
-    this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    self.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     //  Stop the following keys from propagating up to the browser
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
@@ -126,7 +124,7 @@ Game.prototype  = {
     bullets.setAll('outOfBoundsKill', true);
 
     // Start listening for events
-    this.setEventHandlers();
+    self.setEventHandlers();
   },
 
   // Socket connected
@@ -243,10 +241,10 @@ Game.prototype  = {
     }
 
     //shoots bullets
-    if (this.spaceKey.isDown)
+    if (self.spaceKey.isDown)
     {
       //calculate fire values and emit to server to fire from enemy
-      this.sendFire();
+      self.sendFire();
     }
 
     socket.emit('move player', { x: player.x, y: player.y, angle: player.angle })
@@ -262,7 +260,7 @@ Game.prototype  = {
         socket.emit('fire bullet', { x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
-        this.actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+        self.actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
       }
   },
 
