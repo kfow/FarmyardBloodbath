@@ -13,4 +13,4 @@ Command: $ npm install
 
 Now you'll have all the packages you need.
 
-Now: $ node index.js
+Now: $ node app.js
