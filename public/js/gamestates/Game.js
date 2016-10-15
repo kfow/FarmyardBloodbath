@@ -1,6 +1,7 @@
 // Main Game goes here
 var Game = function(game){};
 
+var animals = ['pig','sheep','pig2','sheep2'];
 var socket; // Socket connection
 var land;
 var player;
@@ -23,7 +24,10 @@ Game.prototype  = {
     var sprites = ["assets/ElSheepoSingle.png", "assets/ElSheepoDuel.png"];
     game.load.image('enemy', sprites[Math.floor(Math.random() * 2)]);
     game.load.image('earth', 'assets/light_grass.png');
-    game.load.image('dude', 'assets/ElPiggoSingle.png');
+    game.load.image('pig2', 'assets/ElPiggoDuel.png');
+    game.load.image('sheep2', 'assets/ElSheepoDuel.png');
+    game.load.image('pig', 'assets/ElPiggoSingle.png');
+    game.load.image('sheep', 'assets/ElSheepoSingle.png');
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
     game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
@@ -78,7 +82,6 @@ Game.prototype  = {
 
     var width = w
     var height = h
-
     self.loadAudio();
 
     socket = io.connect();
@@ -95,7 +98,13 @@ Game.prototype  = {
     // The base of our player
     var startX = Math.floor(Math.random() * w);
     var startY = Math.floor(Math.random() * h);
-    player = game.add.sprite(startX, startY, 'dude');
+
+    //Generate random animal
+    var test = Math.floor(Math.random() *  (animals.length ));
+    animalType = animals[test];
+    //set player sprite
+    player = game.add.sprite(startX, startY, animalType);
+
     player.scale.x -= 0.25;
     player.scale.y -= 0.25;
     player.anchor.setTo(0.5, 0.5);
@@ -139,7 +148,7 @@ Game.prototype  = {
     enemies = [];
 
     // Send local player data to the game server
-    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle });
+    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle, animal: animalType});
   },
 
   // Socket disconnected
@@ -149,7 +158,6 @@ Game.prototype  = {
 
   // New player
   onNewPlayer : function(data) {
-    console.log(data)
     console.log('New player connected:', data.id);
 
     // Avoid possible duplicate players
@@ -160,7 +168,7 @@ Game.prototype  = {
     }
 
     // Add new player to the remote players array
-    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle));
+    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle, data.animal));
   },
 
   // Move player
@@ -249,7 +257,6 @@ Game.prototype  = {
     {
       //calculate fire values and emit to server to fire from enemy
       self.sendFire();
-      console.log(player);
     }
 
     // collision detection for bullets + players
