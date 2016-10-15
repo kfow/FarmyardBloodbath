@@ -63,12 +63,6 @@ function create () {
   hay.scale.y -= 0.25;
   hay.enableBody = true;
 
-  // hay.physicsBodyType = Phaser.Physics.ARCADE;
-  // hay.setAll('checkWorldBounds', true);
-  // hay.setAll('outOfBoundsKill', true);
-  // hay.body.collideWorldBounds = true;
-  // hay.body.immovable = true;
-
   // Create some baddies to waste :)
   enemies = [];
   player.bringToTop();
@@ -239,7 +233,6 @@ function update () {
 
 var fireRate = 100;
 var nextFire = 0;
-
 var bullets;
 
 function fire() {
