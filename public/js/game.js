@@ -56,12 +56,19 @@ function create () {
   // add hay bales
   var numberOfHay = Math.round(Math.random() * 9) + 1;
   hay = game.add.group();
+  hay.enableBody = true;
+  hay.physicsBodyType = Phaser.Physics.ARCADE;
+  hay.createMultiple(numberOfHay, 'bullet');
+  hay.setAll('checkWorldBounds', true);
+  hay.setAll('outOfBoundsKill', true);
   for (i = 0; i < numberOfHay; i++){
     hay.create(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
   }
+  hay.forEach(function (x) {
+    x.body.immovable = true;
+  });
   hay.scale.x -= 0.25;
   hay.scale.y -= 0.25;
-  hay.enableBody = true;
 
   // Create some baddies to waste :)
   enemies = [];
@@ -172,8 +179,8 @@ function onRemovePlayer (data) {
 }
 
 function update () {
-  // game.physics.arcade.collide(player, hay);
-  // game.physics.arcade.collide(hay, bullets);
+  game.physics.arcade.collide(player, hay);
+  game.physics.arcade.collide(hay, bullets);
 
   for (var i = 0; i < enemies.length; i++) {
     if (enemies[i].alive) {
