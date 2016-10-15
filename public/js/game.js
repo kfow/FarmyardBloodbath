@@ -6,11 +6,12 @@ var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 var game = new Phaser.Game(w, h, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render })
 
 function preload () {
-  var sprites = ["assets/ElSheepoSingle.png"];
-  game.load.image('enemy', sprites[Math.floor(Math.random() * 3)]);
+  var sprites = ["assets/ElSheepoSingle.png", "assets/ElSheepoDuel.png"];
+  game.load.image('enemy', sprites[Math.round(Math.random() * 2)]);
   game.load.image('earth', 'assets/light_grass.png');
   game.load.image('dude', 'assets/ElPiggoSingle.png');
   game.load.image('bullet', 'assets/bullet.png');
+  game.load.image('hay', 'assets/hay.png');
 }
 
 var socket; // Socket connection
@@ -55,6 +56,15 @@ this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.maxVelocity.setTo(400, 400);
   player.body.collideWorldBounds = true;
+
+  // add hay bales
+  hay = game.add.sprite(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
+  hay.scale.x -= 0.25;
+  hay.scale.y -= 0.25;
+  game.physics.enable(hay, Phaser.Physics.ARCADE);
+  hay.body.collideWorldBounds = true;
+  hay.body.immovable = true;
+
 
   // Create some baddies to waste :)
   enemies = [];
@@ -167,10 +177,14 @@ function onRemovePlayer (data) {
 }
 
 function update () {
+  game.physics.arcade.collide(player, hay);
+  game.physics.arcade.collide(hay, bullets);
+
   for (var i = 0; i < enemies.length; i++) {
     if (enemies[i].alive) {
       enemies[i].update();
       game.physics.arcade.collide(player, enemies[i].player);
+      game.physics.arcade.collide(bullets, enemies[i].player);
     }
   }
 
