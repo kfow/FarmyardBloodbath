@@ -1,3 +1,15 @@
 canvas {
   display: block;
 }
+
+.navbar-red {
+	background-color: red;
+}
+
+.navbar-default {
+	border-color: red;
+}
+
+.navbar-default .navbar-nav>.active>a {
+	background-color: red;
+}
