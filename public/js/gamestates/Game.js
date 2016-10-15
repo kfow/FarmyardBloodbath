@@ -1,7 +1,9 @@
 // Main Game goes here
 var Game = function(game){};
 
+var animals = ['pig','sheep', 'cow', 'pig2', 'sheep2', 'cow2'];
 var socket; // Socket connection
+var animalType;
 var land;
 var player;
 var enemies;
@@ -13,6 +15,7 @@ var fireRate = 100;  //Fire rate for bullets - to be defined by guns later
 var nextFire = 0;
 var bullets;
 var self;
+var fx = {};
 
 Game.prototype  = {
 
@@ -22,9 +25,18 @@ Game.prototype  = {
     var sprites = ["assets/ElSheepoSingle.png", "assets/ElSheepoDuel.png"];
     game.load.image('enemy', sprites[Math.floor(Math.random() * 2)]);
     game.load.image('earth', 'assets/light_grass.png');
-    game.load.image('dude', 'assets/ElPiggoSingle.png');
+    game.load.image('pig2', 'assets/ElPiggoDuel.png');
+    game.load.image('sheep2', 'assets/ElSheepoDuel.png');
+    game.load.image('cow2', 'assets/ElCowoDuel.png');
+    game.load.image('cow', 'assets/ElCowoSingle.png');
+    game.load.image('pig', 'assets/ElPiggoSingle.png');
+    game.load.image('sheep', 'assets/ElSheepoSingle.png');
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
+    game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
+    game.load.audio('sheep_happy', 'sounds/sheep_happy.mp3');
+    game.load.audio('cow_happy', 'sounds/cow_happy.mp3');
+    game.load.audio('troll', 'sounds/troll.mp3');
     game.load.image('barn', 'assets/barn.png');
 
   },
@@ -74,10 +86,10 @@ Game.prototype  = {
 
     var width = w
     var height = h
+    self.loadAudio();
 
     socket = io.connect();
     self.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
     //  Stop the following keys from propagating up to the browser
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
     // Resize our game world to be a 2000 x 2000 square
@@ -90,7 +102,13 @@ Game.prototype  = {
     // The base of our player
     var startX = Math.floor(Math.random() * w);
     var startY = Math.floor(Math.random() * h);
-    player = game.add.sprite(startX, startY, 'dude');
+
+    //Generate random animal
+    var test = Math.floor(Math.random() *  (animals.length ));
+    animalType = animals[test];
+    //set player sprite
+    player = game.add.sprite(startX, startY, animalType);
+
     player.scale.x -= 0.25;
     player.scale.y -= 0.25;
     player.anchor.setTo(0.5, 0.5);
@@ -104,6 +122,7 @@ Game.prototype  = {
     // Create some baddies to waste :)
     enemies = [];
     player.bringToTop();
+
 
     game.camera.follow(player);
     game.camera.deadzone = new Phaser.Rectangle(150, 150, 500, 300);
@@ -134,7 +153,7 @@ Game.prototype  = {
     enemies = [];
 
     // Send local player data to the game server
-    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle });
+    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle, animal: animalType});
   },
 
   // Socket disconnected
@@ -144,7 +163,6 @@ Game.prototype  = {
 
   // New player
   onNewPlayer : function(data) {
-    console.log(data)
     console.log('New player connected:', data.id);
 
     // Avoid possible duplicate players
@@ -155,12 +173,11 @@ Game.prototype  = {
     }
 
     // Add new player to the remote players array
-    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle));
+    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle, data.animal));
   },
 
   // Move player
   onMovePlayer: function(data) {
-    console.log("Move player");
     var movePlayer = self.playerById(data.id);
 
     // Player not found
@@ -186,7 +203,7 @@ Game.prototype  = {
     }
 
     removePlayer.player.kill();
-
+    fx['troll'] = game.add.audio('troll');
     // Remove player from array
     enemies.splice(enemies.indexOf(removePlayer), 1);
   },
@@ -279,7 +296,6 @@ Game.prototype  = {
       terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
     }
     terrain.push({x : Math.random() , y: Math.random() , object: 'barn'});
-    console.log(terrain);
     socket.emit('terrain', terrain);
     self.drawTerrain(terrain);
   },
@@ -291,7 +307,6 @@ Game.prototype  = {
       hay.setAll('checkWorldBounds', true);
       hay.setAll('outOfBoundsKill', true);
       for (i = 0; i < terrain.length; i++){
-          console.log(terrain[i])
           if (terrain[i].object == 'hay'){
             hay.create(Math.floor(terrain[i].x * w), Math.floor(terrain[i].y * h), terrain[i].object);
           }
@@ -307,6 +322,7 @@ Game.prototype  = {
 	          barn.body.collideWorldBounds = true;
 	          barn.body.checkCollision.right = false;
 	          barn.body.checkCollision.left = false;
+            barn.bringToTop();
           }
       }
       hay.forEach(function (x) {
@@ -319,7 +335,6 @@ Game.prototype  = {
   sendFire: function(){
     if (game.time.now > nextFire)
       {
-        console.log("Sending fire bullet message");
         //Calculate parameters for bullet
         var point = new Phaser.Point(player.body.x + 90, player.body.y -2);
         point.rotate(player.x, player.y, player.rotation);
@@ -327,6 +342,12 @@ Game.prototype  = {
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
         self.actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+        var soundbite = animalType;
+        if (soundbite.charAt(soundbite.length - 1) == '2'){
+          soundbite = soundbite.substr(0, soundbite.length-1);
+          console.log(soundbite);
+        }
+        fx[soundbite].play();
       }
   },
 
@@ -338,6 +359,12 @@ Game.prototype  = {
       bullet.rotation = data.rotation;
       game.physics.arcade.velocityFromRotation(data.rotation, data.velocity, bullet.body.velocity);
     }
-  }
+  },
 
+  loadAudio: function(){
+      fx['pig'] = game.add.audio('pig_happy');
+      fx['troll'] = game.add.audio('troll');
+      fx['sheep'] = game.add.audio('sheep_happy');
+      fx['cow'] = game.add.audio('cow_happy');
+  }
 }
