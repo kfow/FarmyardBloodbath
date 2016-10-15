@@ -261,7 +261,10 @@ Game.prototype  = {
     if (self.spaceKey.isDown)
     {
       //calculate fire values and emit to server to fire from enemy
-      self.sendFire();
+
+      // TODO Pass in fireType, default right now
+      // Available options so far: Triple
+      self.sendFire("triple");
     }
 
     // collision detection for bullets + players
@@ -328,7 +331,7 @@ Game.prototype  = {
       hay.scale.y -= 0.25;
   },
 
-  sendFire: function(){
+  sendFire: function(fireType){
     if (game.time.now > nextFire)
       {
         //Calculate parameters for bullet
@@ -337,7 +340,7 @@ Game.prototype  = {
         socket.emit('fire bullet', { x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
-        self.actualFire({ x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+        self.actualFire({fireType: fireType, x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
         var soundbite = animalType;
         if (soundbite.charAt(soundbite.length - 1) == '2'){
           soundbite = soundbite.substr(0, soundbite.length-1);
@@ -348,12 +351,32 @@ Game.prototype  = {
   },
 
   actualFire: function(data){
-    bullet = bullets.getFirstExists(false);
-    if (bullet){
-      bullet.reset(data.x, data.y);
-      bullet.lifespan = data.lifespan;
-      bullet.rotation = data.rotation;
-      game.physics.arcade.velocityFromRotation(data.rotation, data.velocity, bullet.body.velocity);
+
+    // Basic Code for triple shot!
+    if (data.fireType === "triple"){
+      var bullet;
+      var fireRotation;
+      var i;
+      for (i = 0; i < 3; i++){
+        bullet = bullets.getFirstExists(false);
+        bullet.reset(data.x, data.y);
+        bullet.lifespan = data.lifespan;
+        bullet.rotation = data.rotation;
+
+        if (i === 0)  {fireRotation = data.rotation;}
+        if (i === 1)  {fireRotation = data.rotation - 0.5;}
+        if (i === 2)  {fireRotation = data.rotation + 0.5;}
+
+        game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bullet.body.velocity);
+      }
+    } else {
+      bullet = bullets.getFirstExists(false);
+      if (bullet){
+        bullet.reset(data.x, data.y);
+        bullet.lifespan = data.lifespan;
+        bullet.rotation = data.rotation;
+        game.physics.arcade.velocityFromRotation(data.rotation, data.velocity, bullet.body.velocity);
+      }
     }
   },
 
