@@ -234,13 +234,25 @@ Game.prototype  = {
     game.physics.arcade.collide(player, barn);
     game.physics.arcade.collide(bullets, hay, function(bullet){bullet.kill();}, null, self);
     game.physics.arcade.collide(bullets, barn, function(barn, bullet){bullet.kill();}, null, bullets);
+    game.physics.arcade.collide(bullets, player, self.collisionHandler, null, self);
+    // game.physics.arcade.collide(bullets, player, function(yourPlayer, bullet){
+    //   if (bullet.bulletId !== bulletId) {
+    //     bullet.kill();
+    //     socket.emit('player hit', 1);
+    //   };
+    // }, null, self);
 
 
     for (var i = 0; i < enemies.length; i++) {
       if (enemies[i].alive) {
         enemies[i].update();
-        game.physics.arcade.collide(player, enemies[i].player, function(tempPlayer, bullet){bullet.kill(); socket.emit('player hit', 1);}, null, self);
-        game.physics.arcade.collide(bullets, enemies[i].player, function(tempPlayer, bullet){bullet.kill(); socket.emit('player hit', 1);}, null, self);
+        game.physics.arcade.collide(player, enemies[i].player);
+        game.physics.arcade.collide(bullets, enemies[i].player, function(yourPlayer, bullet){
+          if (bullet.bulletId !== bulletId) {
+            bullet.kill();
+            socket.emit('player hit', 1);
+          };
+        }, null, self);
       }
     }
 
@@ -294,19 +306,19 @@ Game.prototype  = {
   },
 
   // I think the parameters are swapped for some ridiculous reason
-  // collisionHandler: function(tempPlayer, bullet) {
-  //   bullet.kill();
-  //   // player.health is nothing need to fix this
-  //   if (bullet.bulletId != bulletId){
-  //     console.log("not equal");
-  //     health = health - 1;
-  //     socket.emit('player hit', 1);
-  //     if (health < 1) {
-  //       location.reload();
-  //       //game.state.start("GameMenu");
-  //     }
-  //   }
-  // },
+  collisionHandler: function(tempPlayer, bullet) {
+    bullet.kill();
+    // player.health is nothing need to fix this
+    if (bullet.bulletId != bulletId){
+      console.log("not equal");
+      health = health - 1;
+      socket.emit('player hit', 1);
+      if (health < 1) {
+        location.reload();
+        //game.state.start("GameMenu");
+      }
+    }
+  },
 
   gotHit: function(data) {
     hitPlayer = self.playerById(data.id.id);  //gets player who got hit
