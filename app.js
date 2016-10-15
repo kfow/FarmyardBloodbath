@@ -104,6 +104,7 @@ function onNewPlayer (data) {
   // Create a new player
   var newPlayer = new Player(data.x, data.y, data.angle)
   newPlayer.id = this.id
+  
   // Broadcast new player to connected socket clients
   this.broadcast.emit('new player', {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), angle: newPlayer.getAngle()})
   // Send existing players to the new player

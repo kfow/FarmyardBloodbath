@@ -255,17 +255,21 @@ Game.prototype  = {
 
   // I think the parameters are swapped for some ridiculous reason
   collisionHandler: function(tempPlayer, bullet) {
-    tempPlayer.kill;
-    bullet.kill;
+    // player.health is nothing need to fix this
+    // player.health = player.health - bullet.damage;
     socket.emit('player hit', 1);
+    /*if (player.health < 1) {
+      console.log("got here should be restarting");
+      game.state.start("Game");
+    }*/
   },
 
   gotHit: function(data) {
     hitPlayer = self.playerById(data.id.id);  //gets player who got hit
     hitPlayer.health = hitPlayer.health - data.damage;
-    /*if (hitPlayer.health < 1) {
-      hitPlayer.kill;
-    }*/
+    if (hitPlayer.health < 1) {
+      hitPlayer.player.destroy();
+    }
   },
   generateMasterTerrain: function (){
     var terrain = [];
