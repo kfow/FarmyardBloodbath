@@ -7,8 +7,8 @@ var game = new Phaser.Game(w, h, Phaser.AUTO, '', { preload: preload, create: cr
 
 function preload () {
   game.load.image('earth', 'assets/light_grass.png');
-  game.load.spritesheet('dude', 'assets/ElPiggo.png', 216, 104);
-  game.load.spritesheet('enemy', 'assets/ElPiggo.png', 216, 104);
+  game.load.image('dude', 'assets/ElPiggoSingle.png');
+  game.load.image('enemy', 'assets/ElPiggoDuel.png');
 }
 
 var socket; // Socket connection
@@ -40,8 +40,8 @@ function create () {
   var startX = Math.round(Math.random() * (1000) - 500);
   var startY = Math.round(Math.random() * (1000) - 500);
   player = game.add.sprite(startX, startY, 'dude');
-  player.scale.x -= 0.65;
-  player.scale.y -= 0.65;
+  player.scale.x -= 0.25;
+  player.scale.y -= 0.25;
   player.anchor.setTo(0.5, 0.5);
 
   // This will force it to decelerate and limit its speed

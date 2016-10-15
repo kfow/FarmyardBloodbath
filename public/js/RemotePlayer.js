@@ -15,8 +15,8 @@ var RemotePlayer = function (index, game, player, startX, startY, startAngle) {
   this.player.animations.add('move', [0], 20, true);
   this.player.animations.add('stop', [0], 20, true);
 
-  this.player.scale.x -= 0.65;
-  this.player.scale.y -= 0.65;
+  this.player.scale.x -= 0.25;
+  this.player.scale.y -= 0.25;
   this.player.anchor.setTo(0.5, 0.5);
 
   this.player.name = index.toString();
