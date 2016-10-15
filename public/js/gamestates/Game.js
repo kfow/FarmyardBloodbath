@@ -279,6 +279,7 @@ Game.prototype  = {
   collisionHandler: function(tempPlayer, bullet) {
     // player.health is nothing need to fix this
     if (bullet.bulletId != bulletId){
+      console.log("not equal");
       health = health - 1;
       socket.emit('player hit', 1);
       if (health < 1) {
