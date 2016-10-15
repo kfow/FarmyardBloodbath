@@ -7,7 +7,7 @@ var game = new Phaser.Game(w, h, Phaser.AUTO, '', { preload: preload, create: cr
 
 function preload () {
   var sprites = ["assets/ElSheepoSingle.png", "assets/ElSheepoDuel.png"];
-  game.load.image('enemy', sprites[Math.round(Math.random() * 2)]);
+  game.load.image('enemy', sprites[Math.floor(Math.random() * 2)]);
   game.load.image('earth', 'assets/light_grass.png');
   game.load.image('dude', 'assets/ElPiggoSingle.png');
   game.load.image('bullet', 'assets/bullet.png');
@@ -15,16 +15,12 @@ function preload () {
 }
 
 var socket; // Socket connection
-
 var land;
-
 var player;
-
 var enemies;
-
+var hay;
 var currentSpeed = 0;
 var cursors;
-
 
 function create () {
 
@@ -32,20 +28,20 @@ function create () {
   var height = h
 
   socket = io.connect();
-this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-    //  Stop the following keys from propagating up to the browser
-    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+  //  Stop the following keys from propagating up to the browser
+  game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
   // Resize our game world to be a 2000 x 2000 square
-  game.world.setBounds(-500, -500, width, height);
+  game.world.setBounds(0, 0, width, height);
 
   // Our tiled scrolling background
   land = game.add.tileSprite(0, 0, width, height, 'earth');
   land.fixedToCamera = true;
 
   // The base of our player
-  var startX = Math.round(Math.random() * (1000) - 500);
-  var startY = Math.round(Math.random() * (1000) - 500);
+  var startX = Math.floor(Math.random() * w);
+  var startY = Math.floor(Math.random() * h);
   player = game.add.sprite(startX, startY, 'dude');
   player.scale.x -= 0.25;
   player.scale.y -= 0.25;
@@ -58,17 +54,23 @@ this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   player.body.collideWorldBounds = true;
 
   // add hay bales
-  hay = game.add.sprite(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
+  var numberOfHay = Math.round(Math.random() * 9) + 1;
+  hay = game.add.group();
+  for (i = 0; i < numberOfHay; i++){
+    hay.create(Math.floor(Math.random() * w), Math.floor(Math.random() * h), 'hay');
+  }
   hay.scale.x -= 0.25;
   hay.scale.y -= 0.25;
-  game.physics.enable(hay, Phaser.Physics.ARCADE);
-  hay.body.collideWorldBounds = true;
-  hay.body.immovable = true;
+  hay.enableBody = true;
 
+  // hay.physicsBodyType = Phaser.Physics.ARCADE;
+  // hay.setAll('checkWorldBounds', true);
+  // hay.setAll('outOfBoundsKill', true);
+  // hay.body.collideWorldBounds = true;
+  // hay.body.immovable = true;
 
   // Create some baddies to waste :)
   enemies = [];
-
   player.bringToTop();
 
   game.camera.follow(player);
@@ -77,16 +79,15 @@ this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
   cursors = game.input.keyboard.createCursorKeys();
 
-  // Start listening for events
-
   bullets = game.add.group();
-    bullets.enableBody = true;
-    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+  bullets.enableBody = true;
+  bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-    bullets.createMultiple(50, 'bullet');
-    bullets.setAll('checkWorldBounds', true);
-    bullets.setAll('outOfBoundsKill', true);
+  bullets.createMultiple(50, 'bullet');
+  bullets.setAll('checkWorldBounds', true);
+  bullets.setAll('outOfBoundsKill', true);
 
+  // Start listening for events
   setEventHandlers();
 }
 
@@ -174,8 +175,8 @@ function onRemovePlayer (data) {
 }
 
 function update () {
-  game.physics.arcade.collide(player, hay);
-  game.physics.arcade.collide(hay, bullets);
+  // game.physics.arcade.collide(player, hay);
+  // game.physics.arcade.collide(hay, bullets);
 
   for (var i = 0; i < enemies.length; i++) {
     if (enemies[i].alive) {
