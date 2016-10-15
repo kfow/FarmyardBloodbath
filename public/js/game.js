@@ -9,6 +9,7 @@ function preload () {
   game.load.image('earth', 'assets/light_grass.png');
   game.load.spritesheet('dude', 'assets/ElPiggo.png', 216, 104);
   game.load.spritesheet('enemy', 'assets/ElPiggo.png', 216, 104);
+  game.load.image('bullet', 'assets/bullet.png');
 }
 
 var socket; // Socket connection
@@ -30,7 +31,10 @@ function create () {
   var height = h
 
   socket = io.connect();
+this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+    //  Stop the following keys from propagating up to the browser
+    game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
   // Resize our game world to be a 2000 x 2000 square
   game.world.setBounds(-500, -500, width, height);
 
@@ -200,7 +204,8 @@ function update () {
     }
   }
 
-  if (game.input.activePointer.isDown)
+  if (this.spaceKey.isDown)
+  //if (game.input.spacebar.isDown)
   {
       fire();
   }
