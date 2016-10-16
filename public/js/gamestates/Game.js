@@ -380,6 +380,7 @@ Game.prototype  = {
       terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
     }
     terrain.push({x : Math.random() , y: Math.random() , object: 'barn'});
+    terrain.push({x : Math.random() , y: Math.random() , object: 'barn'});
     socket.emit('terrain', terrain);
     self.drawTerrain(terrain);
   },
