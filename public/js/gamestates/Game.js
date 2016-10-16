@@ -1,7 +1,7 @@
 // Main Game goes here
 var Game = function(game){};
 
-var animals = ['pig','sheep', 'cow', 'pig2', 'sheep2', 'cow2'];
+var animals = ['pig','sheep', 'cow', 'horse', 'pig2', 'sheep2', 'cow2', 'horse2', 'evil2'];
 var socket; // Socket connection
 var animalType;
 var land;
@@ -40,9 +40,13 @@ Game.prototype  = {
     game.load.image('cow', 'assets/ElCowoSingle.png');
     game.load.image('pig', 'assets/ElPiggoSingle.png');
     game.load.image('sheep', 'assets/ElSheepoSingle.png');
+    game.load.image('evil2', 'assets/ElEvilDuel.png');
+    game.load.image('horse', 'assets/tapirSingle.gif');
+    game.load.image('horse2', 'assets/ElTapirDuel.gif');
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
     game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
+    game.load.audio('horse_happy', 'sounds/horse_happy.mp3');
     game.load.audio('sheep_happy', 'sounds/sheep_happy.mp3');
     game.load.audio('cow_happy', 'sounds/cow_happy.mp3');
     game.load.audio('troll', 'sounds/troll.mp3');
@@ -170,6 +174,14 @@ Game.prototype  = {
     if(fireRate > 210 && !(dual == true && fireType == 'triple')){
         travelSpeed += (Math.floor(Math.random() * 100));
     }
+    if (fireType == 'triple' && animalType != 'evil2'){
+      fireRate+=30;
+    }
+
+    if (animalType == 'evil2'){
+      fireRate -= 30;
+      travelSpeed += 100;
+    }
 
     // Start listening for events
     self.setEventHandlers();
@@ -203,7 +215,7 @@ Game.prototype  = {
     enemies = [];
 
     // Send local player data to the game server
-    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle, animal: animalType});
+    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle, animal: animalType, bulletId: bulletId});
   },
 
   // Socket disconnected
@@ -223,7 +235,7 @@ Game.prototype  = {
     }
 
     // Add new player to the remote players array
-    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle, data.animal));
+    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle, data.animal, data.bulletId));
   },
 
   // Move player
@@ -277,9 +289,8 @@ Game.prototype  = {
         enemies[i].update();
         game.physics.arcade.collide(player, enemies[i].player);
         game.physics.arcade.collide(bullets, enemies[i].player, function(yourPlayer, bullet){
-          if (bullet.bulletId !== bulletId) {
+          if (bullet.bulletId !== enemies[i].bulletId) {
             bullet.kill();
-            socket.emit('player hit', 1);
           };
         }, null, self);
       }
@@ -338,20 +349,20 @@ Game.prototype  = {
 
   // I think the parameters are swapped for some ridiculous reason
   collisionHandler: function(tempPlayer, bullet) {
-    bullet.kill();
-    // player.health is nothing need to fix this
+
     if (bullet.bulletId != bulletId){
-      console.log("not equal");
       health = health - 1;
-      socket.emit('player hit', 1);
+      //socket.emit('player hit', 1);
       if (health < 1) {
-  
+        console.log("I died");
         //change game state here!
         socket.emit('player dead',{});
         //CHANGE STATE!
         //game.state.start("GameMenu");
+        location.reload();
       }
     }
+    bullet.kill();
   },
 
   gotHit: function(data) {
@@ -464,5 +475,7 @@ Game.prototype  = {
       fx['troll'] = game.add.audio('troll');
       fx['sheep'] = game.add.audio('sheep_happy');
       fx['cow'] = game.add.audio('cow_happy');
+      fx['horse'] = game.add.audio('horse_happy');
+      fx['evil'] = game.add.audio('troll');
   }
 }
