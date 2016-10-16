@@ -203,7 +203,7 @@ Game.prototype  = {
     enemies = [];
 
     // Send local player data to the game server
-    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle, animal: animalType});
+    socket.emit('new player', { x: player.x, y: player.y, angle: player.angle, animal: animalType, bulletId: bulletId});
   },
 
   // Socket disconnected
@@ -223,7 +223,7 @@ Game.prototype  = {
     }
 
     // Add new player to the remote players array
-    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle, data.animal));
+    enemies.push(new RemotePlayer(data.id, game, player, data.x, data.y, data.angle, data.animal, data.bulletId));
   },
 
   // Move player
@@ -277,9 +277,12 @@ Game.prototype  = {
         enemies[i].update();
         game.physics.arcade.collide(player, enemies[i].player);
         game.physics.arcade.collide(bullets, enemies[i].player, function(yourPlayer, bullet){
-          if (bullet.bulletId !== bulletId) {
+         // console.log(bullet.bulletId);
+         // console.log(enemies[i].bulletId);
+          if (bullet.bulletId !== enemies[i].bulletId) {
             bullet.kill();
-            socket.emit('player hit', 1);
+            console.log("enemy hit!");
+          //  socket.emit('player hit', 1);
           };
         }, null, self);
       }
@@ -338,18 +341,20 @@ Game.prototype  = {
 
   // I think the parameters are swapped for some ridiculous reason
   collisionHandler: function(tempPlayer, bullet) {
-    bullet.kill();
+    
     if (bullet.bulletId != bulletId){
       health = health - 1;
-      socket.emit('player hit', 1);
+      //socket.emit('player hit', 1);
       if (health < 1) {
-  
+        console.log("I died");
         //change game state here!
         socket.emit('player dead',{});
         //CHANGE STATE!
         //game.state.start("GameMenu");
+        location.reload();
       }
     }
+    bullet.kill();
   },
 
   gotHit: function(data) {

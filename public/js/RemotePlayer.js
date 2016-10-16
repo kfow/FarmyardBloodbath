@@ -1,6 +1,6 @@
 /* global game */
 
-var RemotePlayer = function (index, game, player, startX, startY, startAngle, animal) {
+var RemotePlayer = function (index, game, player, startX, startY, startAngle, animal, bulletId) {
   var x = startX;
   var y = startY;
   var angle = startAngle;
@@ -10,6 +10,8 @@ var RemotePlayer = function (index, game, player, startX, startY, startAngle, an
   this.player = player;
   this.alive = true;
 
+  this.bulletId = bulletId;
+  
   this.player = game.add.sprite(x, y, animal);
 
   this.player.animations.add('move', [0], 20, true);
