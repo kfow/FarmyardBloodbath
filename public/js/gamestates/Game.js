@@ -1,7 +1,7 @@
 // Main Game goes here
 var Game = function(game){};
 
-var animals = ['pig','sheep', 'cow', 'horse', 'pig2', 'sheep2', 'cow2', 'horse2'];
+var animals = ['pig','sheep', 'cow', 'horse', 'pig2', 'sheep2', 'cow2', 'horse2', 'evil2'];
 var socket; // Socket connection
 var animalType;
 var land;
@@ -40,6 +40,7 @@ Game.prototype  = {
     game.load.image('cow', 'assets/ElCowoSingle.png');
     game.load.image('pig', 'assets/ElPiggoSingle.png');
     game.load.image('sheep', 'assets/ElSheepoSingle.png');
+    game.load.image('evil2', 'assets/ElEvilDuel.png');
     game.load.image('horse', 'assets/tapirSingle.gif');
     game.load.image('horse2', 'assets/ElTapirDuel.gif');
     game.load.image('bullet', 'assets/bullet.png');
@@ -173,6 +174,14 @@ Game.prototype  = {
     if(fireRate > 210 && !(dual == true && fireType == 'triple')){
         travelSpeed += (Math.floor(Math.random() * 100));
     }
+    if (fireType == 'triple' && animalType != 'evil2'){
+      fireRate+=30;
+    }
+
+    if (animalType == 'evil2'){
+      fireRate -= 30;
+      travelSpeed += 100;
+    }
 
     // Start listening for events
     self.setEventHandlers();
@@ -280,12 +289,8 @@ Game.prototype  = {
         enemies[i].update();
         game.physics.arcade.collide(player, enemies[i].player);
         game.physics.arcade.collide(bullets, enemies[i].player, function(yourPlayer, bullet){
-         // console.log(bullet.bulletId);
-         // console.log(enemies[i].bulletId);
           if (bullet.bulletId !== enemies[i].bulletId) {
             bullet.kill();
-            console.log("enemy hit!");
-          //  socket.emit('player hit', 1);
           };
         }, null, self);
       }
@@ -471,5 +476,6 @@ Game.prototype  = {
       fx['sheep'] = game.add.audio('sheep_happy');
       fx['cow'] = game.add.audio('cow_happy');
       fx['horse'] = game.add.audio('horse_happy');
+      fx['evil'] = game.add.audio('troll');
   }
 }
