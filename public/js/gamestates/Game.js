@@ -418,7 +418,7 @@ Game.prototype  = {
 
         point.rotate(player.x, player.y, player.rotation);
 
-        socket.emit('fire bullet', { x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
+        socket.emit('fire bullet', { x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000, fireType: fireType });
         nextFire  = game.time.now + fireRate;
         //Call actualfire with data
         self.actualFire({fireType: fireType, x: point.x, y: point.y, rotation: player.rotation, velocity: 1000, lifespan: 2000 });
