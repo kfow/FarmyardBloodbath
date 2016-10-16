@@ -1,7 +1,7 @@
 // Main Game goes here
 var Game = function(game){};
 
-var animals = ['pig','sheep', 'cow', 'pig2', 'sheep2', 'cow2'];
+var animals = ['pig','sheep', 'cow', 'horse', 'pig2', 'sheep2', 'cow2', 'horse2'];
 var socket; // Socket connection
 var animalType;
 var land;
@@ -40,9 +40,12 @@ Game.prototype  = {
     game.load.image('cow', 'assets/ElCowoSingle.png');
     game.load.image('pig', 'assets/ElPiggoSingle.png');
     game.load.image('sheep', 'assets/ElSheepoSingle.png');
+    game.load.image('horse', 'assets/tapirSingle.gif');
+    game.load.image('horse2', 'assets/ElTapirDuel.gif');
     game.load.image('bullet', 'assets/bullet.png');
     game.load.image('hay', 'assets/hay.png');
     game.load.audio('pig_happy', 'sounds/pig_happy.mp3');
+    game.load.audio('horse_happy', 'sounds/horse_happy.mp3');
     game.load.audio('sheep_happy', 'sounds/sheep_happy.mp3');
     game.load.audio('cow_happy', 'sounds/cow_happy.mp3');
     game.load.audio('troll', 'sounds/troll.mp3');
@@ -341,7 +344,7 @@ Game.prototype  = {
 
   // I think the parameters are swapped for some ridiculous reason
   collisionHandler: function(tempPlayer, bullet) {
-    
+
     if (bullet.bulletId != bulletId){
       health = health - 1;
       //socket.emit('player hit', 1);
@@ -467,5 +470,6 @@ Game.prototype  = {
       fx['troll'] = game.add.audio('troll');
       fx['sheep'] = game.add.audio('sheep_happy');
       fx['cow'] = game.add.audio('cow_happy');
+      fx['horse'] = game.add.audio('horse_happy');
   }
 }
