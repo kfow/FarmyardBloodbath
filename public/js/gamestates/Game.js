@@ -345,7 +345,10 @@ Game.prototype  = {
       health = health - 1;
       socket.emit('player hit', 1);
       if (health < 1) {
-        location.reload();
+  
+        //change game state here!
+        socket.emit('player dead',{});
+        //CHANGE STATE!
         //game.state.start("GameMenu");
       }
     }

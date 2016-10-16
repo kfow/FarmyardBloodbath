@@ -77,12 +77,28 @@ function onSocketConnection (client) {
   client.on('player hit', playerHit);
   // Listen for master terrain details
   client.on('terrain', saveTerrain);
+  //listen for dead player
+  client.on('player dead', playerDied);
 }
 
 
 
 function playerHit (data) {
   this.broadcast.emit('player hit', {id:playerById(this.id), damage: data})
+}
+//player died function
+function playerDied () {
+  util.log('Player has died, RIP: ' + this.id)
+  var removePlayer = playerById(this.id)
+  // Player not found
+  if (!removePlayer) {
+    util.log('Dead player not found: ' + this.id)
+    return
+  }
+  // Remove player from players array
+  players.splice(players.indexOf(removePlayer), 1)
+  // Broadcast removed player to connected socket clients
+  this.broadcast.emit('remove player', {id: this.id})
 }
 // Socket client has disconnected
 function onClientDisconnect () {
@@ -104,7 +120,7 @@ function onNewPlayer (data) {
   // Create a new player
   var newPlayer = new Player(data.x, data.y, data.angle, data.animal)
   newPlayer.id = this.id
-  
+
   // Broadcast new player to connected socket clients
   this.broadcast.emit('new player', {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), angle: newPlayer.getAngle(), animal: newPlayer.animal})
   // Send existing players to the new player
