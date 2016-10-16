@@ -375,7 +375,7 @@ Game.prototype  = {
   generateMasterTerrain: function (){
     var terrain = [];
     // generate array of dictonaries defining terrain:
-    var numberOfHay = Math.round(Math.random() * 9) + 1;
+    var numberOfHay = Math.round(Math.random() * 10) + 4;
     for (i = 0; i < numberOfHay; i++){
       terrain.push({x : Math.random() , y: Math.random() , object: 'hay'});
     }
