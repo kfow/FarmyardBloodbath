@@ -459,7 +459,7 @@ Game.prototype  = {
         if (i === 1)  {fireRotation = data.rotation - 0.4;}
         if (i === 2)  {fireRotation = data.rotation + 0.4;}
 
-        game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bodyullet.body.velocity);
+        game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bullet.body.velocity);
       }
       }
     } else {
