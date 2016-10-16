@@ -450,7 +450,7 @@ Game.prototype  = {
       var i;
       for (i = 0; i < 3; i++){
         bullet = bullets.getFirstExists(false);
-        bullet.reset(data.x, data.y);
+        if (bullet) {bullet.reset(data.x, data.y);
         bullet.lifespan = data.lifespan;
         bullet.rotation = data.rotation;
         bullet.bulletId = bulletId;
@@ -459,6 +459,7 @@ Game.prototype  = {
         if (i === 2)  {fireRotation = data.rotation + 0.4;}
 
         game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bullet.body.velocity);
+      }
       }
     } else {
       bullet = bullets.getFirstExists(false);
