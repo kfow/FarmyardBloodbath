@@ -264,7 +264,7 @@ Game.prototype  = {
       return;
     }
 
-    removePlayer.player.destroy();
+    removePlayer.player.kill();
     fx['troll'] = game.add.audio('troll');
     // Remove player from array
     enemies.splice(enemies.indexOf(removePlayer), 1);
@@ -357,7 +357,7 @@ Game.prototype  = {
         console.log("I died");
         //change game state here!
         socket.emit('player dead',{});
-        player.destroy();
+        player.kill();
         //CHANGE STATE!
         //game.state.start("GameMenu");
         location.reload();
@@ -370,7 +370,7 @@ Game.prototype  = {
     hitPlayer = self.playerById(data.id.id);  //gets player who got hit
     hitPlayer.health = hitPlayer.health - data.damage;
     if (hitPlayer.health < 1) {
-      hitPlayer.player.destroy();
+      hitPlayer.player.kill();
     }
   },
   generateMasterTerrain: function (){
@@ -459,7 +459,7 @@ Game.prototype  = {
         if (i === 1)  {fireRotation = data.rotation - 0.4;}
         if (i === 2)  {fireRotation = data.rotation + 0.4;}
 
-        game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bullet.body.velocity);
+        game.physics.arcade.velocityFromRotation(fireRotation, data.velocity, bodyullet.body.velocity);
       }
       }
     } else {
