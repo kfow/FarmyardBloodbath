@@ -1,7 +1,7 @@
 // Main Game goes here
 var Game = function(game){};
 
-var animals = ['pig','sheep', 'cow', 'horse', 'pig2', 'sheep2', 'cow2', 'horse2', 'evil2'];
+var animals = ['pig','sheep', 'cow', 'horse', 'pig2', 'sheep2', 'cow2', 'horse2', 'evil2', 'mouse2'];
 var socket; // Socket connection
 var animalType;
 var land;
@@ -41,6 +41,7 @@ Game.prototype  = {
     game.load.image('pig', 'assets/ElPiggoSingle.png');
     game.load.image('sheep', 'assets/ElSheepoSingle.png');
     game.load.image('evil2', 'assets/ElEvilDuel.png');
+    game.load.image('mouse2', 'assets/ElMouseDuel.png');
     game.load.image('horse', 'assets/tapirSingle.gif');
     game.load.image('horse2', 'assets/ElTapirDuel.gif');
     game.load.image('bullet', 'assets/bullet.png');
@@ -480,5 +481,6 @@ Game.prototype  = {
       fx['cow'] = game.add.audio('cow_happy');
       fx['horse'] = game.add.audio('horse_happy');
       fx['evil'] = game.add.audio('troll');
+      fx['mouse'] = game.add.audio('troll');
   }
 }
