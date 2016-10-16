@@ -339,9 +339,7 @@ Game.prototype  = {
   // I think the parameters are swapped for some ridiculous reason
   collisionHandler: function(tempPlayer, bullet) {
     bullet.kill();
-    // player.health is nothing need to fix this
     if (bullet.bulletId != bulletId){
-      console.log("not equal");
       health = health - 1;
       socket.emit('player hit', 1);
       if (health < 1) {
