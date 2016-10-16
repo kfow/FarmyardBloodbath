@@ -6,7 +6,7 @@ var RemotePlayer = function (index, game, player, startX, startY, startAngle, an
   var angle = startAngle;
 
   this.game = game;
-  this.health = 3;
+  this.health = 5;
   this.player = player;
   this.alive = true;
 
