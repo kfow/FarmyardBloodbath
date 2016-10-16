@@ -264,7 +264,7 @@ Game.prototype  = {
       return;
     }
 
-    removePlayer.player.kill();
+    removePlayer.player.destroy();
     fx['troll'] = game.add.audio('troll');
     // Remove player from array
     enemies.splice(enemies.indexOf(removePlayer), 1);
@@ -357,6 +357,7 @@ Game.prototype  = {
         console.log("I died");
         //change game state here!
         socket.emit('player dead',{});
+        player.destroy();
         //CHANGE STATE!
         //game.state.start("GameMenu");
         location.reload();
